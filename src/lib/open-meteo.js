@@ -10,16 +10,70 @@ import { HttpError } from './http-error.js';
 //   - Turn every failure into an HttpError: 504 when the timeout fired
 //     (err.name is 'TimeoutError'), 502 for a network failure, a status that
 //     isn't ok, or a body that isn't JSON.
-
+async function jsonFetch(url) {
+  try {
+    const res = await fetch(url, {signal: AbortSignal.timeout(config.upstreamTimeoutMs)})
+    if (!res.ok) {
+      throw new HttpError(
+        502,
+        `Error: Status ${res.status} `
+      );
+    }
+    return await res.json()
+  } catch (error) {
+      if (error instanceof HttpError) {
+        throw error
+      }
+    if (error.name == TimeoutError) {
+      throw new HttpError(
+        504,
+        `Timeout Error: service didn't respond after ${config.upstreamTimeoutMs} milliseconds`
+      );
+    }
+    throw new HttpError(
+      502,
+      `Error: Invalid response`
+    );
+  }
+}
 // TODO (you): look up a city with the geocoding API and return
 // { name, region, country, latitude, longitude, timezone } for the first result.
 // Throw a 404 HttpError when there are no results.
 export async function geocodeCity(name) {
-  throw new Error('geocodeCity is not written yet');
+  const urlParams = new URLSearchParams({
+    name,
+    count: 1,
+    language: 'en',
+    format: 'json'
+  })
+  const data = await jsonFetch(`${config.geocodingUrl}/search?${urlParams}`)
+  if (!data?.results  || data.results.length === 0) {
+    throw new HttpError(404, `City not found: ${name}`);
+  }
+  return {
+    name: data[0].name,
+    region: data[0].admin1 ?? null,
+    country: data[0].country ?? null,
+    latitude: data[0].latitude,
+    longitude: data[0].longitude,
+    timezone: data[0].timezone
+  }
 }
 
 // TODO (you): get the current weather and a 3-day daily forecast from the
 // forecast API and return the parsed response.
 export async function getForecast(latitude, longitude) {
-  throw new Error('getForecast is not written yet');
+  const urlParams = new URLSearchParams({
+    latitude: String(latitude),
+    longitude: String(longitude),
+    current: 'temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code',
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
+    timezone: 'auto',
+    forecast_days: '3'
+  })
+  const data = await jsonFetch(`${config.forecastUrl}/forecast?${urlParams}`)
+    if (!data?.current || !data?.daily || data.results.length === 0) {
+    throw new HttpError(502, 'Invalid response');
+  }
+  return data
 }
