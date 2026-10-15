@@ -1,33 +1,55 @@
 # City Weather API
 
-TODO (you): one or two sentences on what this service does.
+This service is a simple API to get the weather and compare weather of cities
 
 ## Run it
 
-TODO (you): the commands to install and start it, including copying `.env.example` to `.env`.
+You can run it with with doing `npm install`, `cp .env.example .env`, and `npm start`
 
 ## Environment variables
 
-TODO (you): a table with every variable from `.env.example`, its default, and what it controls.
+`PORT`: sets the port of the server
+`GEOCODING_URL`: sets the geocoding url
+`FORECAST_URL`: sets the forecast url
+`UPSTREAM_TIMEOUT_MS`: sets when to call a timeout error
+`CACHE_TTL_SECONDS`: sets how long until cached data gets deleted
 
 ## Endpoints
 
-TODO (you): each endpoint with an example request and a short description of the response.
+`GET /api/weather?city=Toronto`: returns up to 2 days of weather for the selected city
+`GET /api/compare?cities=Toronto,Vancouver,Halifax`: returns 2-5 cities and shows what is warmest and coldest
+`GET /api/cache/stats`: returns cache stats of which ones hit
 
 ## Testing
 
-TODO (you): one `curl` command for each of the 10 requests on the assignment page, with the status
-code it should get on a freshly started server. On Windows, run these in Git Bash. An example to copy:
-
 ```bash
+# route not found: 404
+curl -i "http://localhost:4000/a"
 # Weather for a city: 200
 curl -i "http://localhost:4000/api/weather?city=Toronto"
+# Timeout error (modify UPSTREAM_TIMEOUT_MS to 1 to try): 504
+curl -i "http://localhost:4000/api/weather?city=Toronto"
+# City that does not exist: 404
+curl -i "http://localhost:4000/api/weather?city=Qwertyville"
+# Weather for a city that is less then 2 or greater then 60 characters: 400
+curl -i "http://localhost:4000/api/weather?city=T"
+# Weather compare for 2-5 cities: 200
+curl -i "http://localhost:4000/api/compare?cities=Toronto,Vancouver,Halifax"
+# Weather compare for 2-5 cities but one is invalid: 200 (invalid city gets 404)
+curl -i "http://localhost:4000/api/compare?cities=Vancouver,Halifax,Qwertyville"
+# Using /api/compare for less then 2 or greater than 6 cities: 400
+curl -i "http://localhost:4000/api/compare?cities=Toronto"
+# Using /api/compare that has duplicate cities: 400
+curl -i "http://localhost:4000/api/compare?cities=Toronto,Halifax,Toronto"
+# Cache: 200
+curl -i "http://localhost:4000/api/cache/stats"
+
 ```
 
 ## Data source
 
-TODO (you): credit Open-Meteo with a link to https://open-meteo.com/.
+The data source is from https://open-meteo.com/.
 
 ## AI use
 
-TODO (you): each AI tool you used and what for, or "No AI tools used."
+No AI tools used.

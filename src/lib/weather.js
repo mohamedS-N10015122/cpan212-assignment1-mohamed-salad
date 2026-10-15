@@ -19,6 +19,7 @@ export async function getCityWeather(city) {
   if (weatherCache !== undefined) {
     return{
       ...weatherCache,
+      fetchedAt: new Date().toISOString(),
       cached: true
     }
   }
@@ -51,11 +52,10 @@ export async function getCityWeather(city) {
       precipitationChancePercent: daily.precipitation_probability_max[i],
       weatherCode: daily.weather_code[i],
       conditions: describeWeatherCode(daily.weather_code[i]),
-      fetchedAt: new Date().toISOString()
     }))
   }
   cache.set(key, data);
-  return {...data, cached: false}
+  return {...data,fetchedAt: new Date().toISOString(), cached: false}
 }
 
 // TODO (you): return the cache statistics for GET /api/cache/stats.

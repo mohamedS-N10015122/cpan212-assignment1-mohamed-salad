@@ -16,7 +16,7 @@ async function jsonFetch(url) {
     if (!res.ok) {
       throw new HttpError(
         502,
-        `Could not get a valid response from the forecast/geocoding service`
+        {message: `Could not get a valid response from the forecast/geocoding service`}
       );
     }
     return await res.json()
@@ -24,7 +24,7 @@ async function jsonFetch(url) {
       if (err instanceof HttpError) {
         throw err
       }
-    if (err.name == TimeoutError) {
+    if (err.name === 'TimeoutError') {
       throw new HttpError(
         504,
         `Timeout Error: service didn't respond after ${config.upstreamTimeoutMs} milliseconds`
@@ -32,7 +32,7 @@ async function jsonFetch(url) {
     }
     throw new HttpError(
       502,
-      `Error: Invalid response`
+      `Could not get a valid response from the service`
     );
   }
 }
@@ -48,7 +48,7 @@ export async function geocodeCity(name) {
   })
   const data = await jsonFetch(`${config.geocodingUrl}/search?${urlParams}`)
   if (!data?.results  || data.results.length === 0) {
-    throw new HttpError(404, `City not found: ${name}`);
+    throw new HttpError(404, "Invalid query",{cities: `City not found: ${name}`});
   }
   const data1 = data.results[0]
   return {
