@@ -13,14 +13,17 @@ export function parseCity(value) {
 // 400 HttpError with details.cities when it breaks a rule from the assignment page.
 export function parseCities(value) {
   if (typeof value !== 'string' ||  value.trim()==="") {
-    throw new HttpError(400, "invalid query", "there must be 2 to 5 cities");
+    throw new HttpError(400, "invalid query", {cities: "there must be 2 to 5 cities"});
   }
   const cities = value.split(',').map((city) => city.trim())
+  if (cities.length<2 || cities.length>5|| cities.some((city) => city.length<2 || city.length>60)) {
+      throw new HttpError(400, "Invalid query", { cities: 'there must be 2-5 cities and each having 2-60 characters'})
+  }
   const set = new Set();
   for (const city of cities){
     const uniqCity = city.toLowerCase()
     if (set.has(uniqCity)) {
-      throw new HttpError(400, "Invalid query", `${uniqCity} is listed more than once`);
+      throw new HttpError(400, "Invalid query", { cities: `"${uniqCity}" is listed more than once`})
     }
     set.add(uniqCity)
   }

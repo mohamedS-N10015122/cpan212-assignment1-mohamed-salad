@@ -16,13 +16,13 @@ async function jsonFetch(url) {
     if (!res.ok) {
       throw new HttpError(
         502,
-        `Error: Status ${res.status} `
+        `Could not get a valid response from the forecast/geocoding service`
       );
     }
     return await res.json()
   } catch (err) {
       if (err instanceof HttpError) {
-        throw error
+        throw err
       }
     if (err.name == TimeoutError) {
       throw new HttpError(
@@ -50,13 +50,14 @@ export async function geocodeCity(name) {
   if (!data?.results  || data.results.length === 0) {
     throw new HttpError(404, `City not found: ${name}`);
   }
+  const data1 = data.results[0]
   return {
-    name: data[0].name,
-    region: data[0].admin1 ?? null,
-    country: data[0].country ?? null,
-    latitude: data[0].latitude,
-    longitude: data[0].longitude,
-    timezone: data[0].timezone
+    name: data1.name,
+    region: data1.admin1 ?? null,
+    country: data1.country ?? null,
+    latitude: data1.latitude,
+    longitude: data1.longitude,
+    timezone: data1.timezone
   }
 }
 
@@ -72,7 +73,7 @@ export async function getForecast(latitude, longitude) {
     forecast_days: '3'
   })
   const data = await jsonFetch(`${config.forecastUrl}/forecast?${urlParams}`)
-    if (!data?.current || !data?.daily || data.results.length === 0) {
+    if (!data?.current || !data?.daily || data.results?.length === 0) {
     throw new HttpError(502, 'Invalid response');
   }
   return data

@@ -24,7 +24,7 @@ export function makeCache(ttlSeconds){
         cache.set(key, {value, expiresAt: Date.now()+ttlSeconds*1000})
     }
     function stats() {
-        current = Date.now()
+        const current = Date.now()
         for (const [key, entry] of cache) {
             if (current >= entry.expiresAt) {
                 cache.delete(key)
@@ -33,7 +33,7 @@ export function makeCache(ttlSeconds){
         return{
             entries: cache.size,
             hits,
-            miss,
+            misses,
             ttlSeconds
         }
     }

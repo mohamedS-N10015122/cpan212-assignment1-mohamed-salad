@@ -10,7 +10,7 @@ weatherRouter.get('/weather', async (req, res, next) => {
   try {
     const city = parseCity(req.query.city)
     const summary = await getCityWeather(city)
-    res.status(200).json({data, attribution})
+    res.status(200).json({summary, attribution})
   } catch (err) {
     next(err)
   }
@@ -21,7 +21,7 @@ weatherRouter.get('/weather', async (req, res, next) => {
 // then build the cities array and the summary described on the assignment page.
 weatherRouter.get('/compare', async (req, res, next) => {
   try {
-    const cities = parseCities
+    const cities = parseCities(req.query.cities)
     const results = await Promise.allSettled(
       cities.map((city) => getCityWeather(city))
     )
@@ -32,6 +32,9 @@ weatherRouter.get('/compare', async (req, res, next) => {
           data: result.value,
         }
       }
+      return {
+        city: cities[i],
+        error: {status: 404, message: result.reason?.message ?? 'Unable to retrieve weather'}};
     })
     res.status(200).json({data: {cities: cityResults}, attribution})
   } catch (err) {

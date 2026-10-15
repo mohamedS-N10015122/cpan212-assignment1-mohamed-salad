@@ -15,7 +15,7 @@ const cache =  makeCache(config.cacheTtlSeconds)
 
 export async function getCityWeather(city) {
   const key = city.trim().toLowerCase()
-  const weatherCache = makeCache.get(key)
+  const weatherCache = cache.get(key)
   if (weatherCache !== undefined) {
     return{
       ...weatherCache,
@@ -26,7 +26,7 @@ export async function getCityWeather(city) {
   const summary2 = await getForecast(summary1.latitude, summary1.longitude)
   const current = summary2.current
   const daily = summary2.daily
-  const summary = {
+  const data = {
     location: {
       name: summary1.name,
       region: summary1.region,
@@ -54,7 +54,8 @@ export async function getCityWeather(city) {
       fetchedAt: new Date().toISOString()
     }))
   }
-  return summary
+  cache.set(key, data);
+  return {...data, cached: false}
 }
 
 // TODO (you): return the cache statistics for GET /api/cache/stats.
