@@ -1,6 +1,7 @@
 import { config } from '../config.js';
 import { geocodeCity, getForecast } from './open-meteo.js';
 import { describeWeatherCode } from './weather-codes.js';
+import { makeCache } from './cache.js';
 
 // TODO (you): create one cache for the whole app, with a time to live of
 // config.cacheTtlSeconds.
@@ -9,7 +10,18 @@ import { describeWeatherCode } from './weather-codes.js';
 // the assignment page. Check the cache first. On a miss, geocode the city, get
 // the forecast, build the summary, store it, and return it with cached: false.
 // On a hit, return the stored summary with cached: true.
+
+const cache =  makeCache(config.cacheTtlSeconds)
+
 export async function getCityWeather(city) {
+  const key = city.trim().toLowerCase()
+  const weatherCache = makeCache.get(key)
+  if (weatherCache !== undefined) {
+    return{
+      ...weatherCache,
+      cached: true
+    }
+  }
   const summary1 = await geocodeCity(city)
   const summary2 = await getForecast(summary1.latitude, summary1.longitude)
   const current = summary2.current
@@ -47,5 +59,5 @@ export async function getCityWeather(city) {
 
 // TODO (you): return the cache statistics for GET /api/cache/stats.
 export function getCacheStats() {
-  throw new Error('getCacheStats is not written yet');
+  return cache.stats()
 }
