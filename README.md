@@ -8,16 +8,16 @@ You can run it with with doing `npm install`, `cp .env.example .env`, and `npm s
 
 ## Environment variables
 
-`PORT`: sets the port of the server
-`GEOCODING_URL`: sets the geocoding url
-`FORECAST_URL`: sets the forecast url
-`UPSTREAM_TIMEOUT_MS`: sets when to call a timeout error
+`PORT`: sets the port of the server  
+`GEOCODING_URL`: sets the geocoding url  
+`FORECAST_URL`: sets the forecast url  
+`UPSTREAM_TIMEOUT_MS`: sets when to call a timeout error  
 `CACHE_TTL_SECONDS`: sets how long until cached data gets deleted
 
 ## Endpoints
 
-`GET /api/weather?city=Toronto`: returns up to 2 days of weather for the selected city
-`GET /api/compare?cities=Toronto,Vancouver,Halifax`: returns 2-5 cities and shows what is warmest and coldest
+`GET /api/weather?city=Toronto`: returns up to 2 days of weather for the selected city  
+`GET /api/compare?cities=Toronto,Vancouver,Halifax`: returns 2-5 cities and shows what is warmest and coldest  
 `GET /api/cache/stats`: returns cache stats of which ones hit
 
 ## Testing
