@@ -1,6 +1,6 @@
 # City Weather API
 
-This service is a simple API to get the weather and compare weather of cities
+This service is a simple API to get the weather and compare the weather of cities
 
 ## Run it
 
