@@ -4,7 +4,7 @@ This service is a simple API to get the weather and compare the weather of citie
 
 ## Run it
 
-You can run it by doing `npm install`, `cp .env.example .env`, and `npm start`
+You can run it by doing `npm install`, `cp .env.example .env`, and `npm start` using node 24 or higher
 
 ## Environment variables
 
