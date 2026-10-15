@@ -4,7 +4,7 @@ This service is a simple API to get the weather and compare weather of cities
 
 ## Run it
 
-You can run it with with doing `npm install`, `cp .env.example .env`, and `npm start`
+You can run it by doing `npm install`, `cp .env.example .env`, and `npm start`
 
 ## Environment variables
 
@@ -31,13 +31,13 @@ curl -i "http://localhost:4000/api/weather?city=Toronto"
 curl -i "http://localhost:4000/api/weather?city=Toronto"
 # City that does not exist: 404
 curl -i "http://localhost:4000/api/weather?city=Qwertyville"
-# Weather for a city that is less then 2 or greater then 60 characters: 400
+# Weather for a city that is less than 2 or greater than 60 characters: 400
 curl -i "http://localhost:4000/api/weather?city=T"
 # Weather compare for 2-5 cities: 200
 curl -i "http://localhost:4000/api/compare?cities=Toronto,Vancouver,Halifax"
-# Weather compare for 2-5 cities but one is invalid: 200 (invalid city gets 404)
+# Weather compare for 2-5 cities, but one is invalid: 200 (invalid city gets 404)
 curl -i "http://localhost:4000/api/compare?cities=Vancouver,Halifax,Qwertyville"
-# Using /api/compare for less then 2 or greater than 6 cities: 400
+# Using /api/compare for less than 2 or greater than 6 cities: 400
 curl -i "http://localhost:4000/api/compare?cities=Toronto"
 # Using /api/compare that has duplicate cities: 400
 curl -i "http://localhost:4000/api/compare?cities=Toronto,Halifax,Toronto"
