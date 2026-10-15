@@ -20,11 +20,11 @@ async function jsonFetch(url) {
       );
     }
     return await res.json()
-  } catch (error) {
-      if (error instanceof HttpError) {
+  } catch (err) {
+      if (err instanceof HttpError) {
         throw error
       }
-    if (error.name == TimeoutError) {
+    if (err.name == TimeoutError) {
       throw new HttpError(
         504,
         `Timeout Error: service didn't respond after ${config.upstreamTimeoutMs} milliseconds`
